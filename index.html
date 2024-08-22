@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+</head>
+
+<body>
+    Color:<input id="carColor">
+    brand:<input id="carbrand">
+    <button onclick="add()"> Add</button>
+    <hr>
+    <div id="display"></div>
+    <script>
+        const SERVER = "http://127.0.0.1:3000/cars/"
+        axios(SERVER).then(res => display.innerHTML = res.data.map(car => `
+        <div>
+            <button onclick="del('${car.id}')"> del</button>
+            <button onclick="upd('${car.id}')"> upd</button>
+            color:${car.color},
+            brand:${car.brand}
+         
+         </div>
+        `).join(""))
+
+        // const add = () => axios.post(SERVER, data).then(res => console.log(res))
+        const add = () => axios.post(SERVER, { "color": carColor.value, "brand": carbrand.value }).then(res => console.log(res))
+
+        const del=(id)=>{
+            console.log(id);
+            axios.delete(SERVER  + id)
+        }
+
+        const upd=(id)=>{
+            console.log(id);
+            axios.put(SERVER  + id,{ "color": carColor.value, "brand": carbrand.value })
+        }
+    </script>
+</body>
+
+</html>

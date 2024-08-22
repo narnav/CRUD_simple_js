@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car Management</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>Car Management</h1>
+
+    <h2>Add Car</h2>
+    Color: <input id="carColor" type="text">
+    Brand: <input id="carBrand" type="text">
+    <button onclick="addCar()">Add</button>
+
+    <h2>Update Car</h2>
+    Car ID: <input id="updateCarId" type="text">
+    New Color: <input id="updateCarColor" type="text">
+    New Brand: <input id="updateCarBrand" type="text">
+    <button onclick="updateCar()">Update</button>
+
+    <h2>Delete Car</h2>
+    Car ID: <input id="deleteCarId" type="text">
+    <button onclick="deleteCar()">Delete</button>
+
+    <h2>All Cars</h2>
+    <button onclick="getAllCars()">Refresh List</button>
+    <ul id="carList"></ul>
+
+    <script>
+        const SERVER = "http://127.0.0.1:3000/cars";
+
+        // Function to fetch and display all cars
+        const getAllCars = () => {
+            axios.get(SERVER).then(res => {
+                const carList = document.getElementById('carList');
+                carList.innerHTML = '';
+                res.data.forEach(car => {
+                    const li = document.createElement('li');
+                    li.textContent = `ID: ${car.id}, Color: ${car.color}, Brand: ${car.brand}`;
+                    carList.appendChild(li);
+                });
+            }).catch(err => console.error(err));
+        };
+
+        // Function to add a new car
+        const addCar = () => {
+            const color = document.getElementById('carColor').value;
+            const brand = document.getElementById('carBrand').value;
+
+            axios.post(SERVER, { color, brand })
+                .then(res => {
+                    console.log('Car added:', res.data);
+                    getAllCars(); // Refresh the car list
+                })
+                .catch(err => console.error(err));
+        };
+
+        // Function to update a car
+        const updateCar = () => {
+            const id = document.getElementById('updateCarId').value;
+            const color = document.getElementById('updateCarColor').value;
+            const brand = document.getElementById('updateCarBrand').value;
+
+            axios.put(`${SERVER}/${id}`, { color, brand })
+                .then(res => {
+                    console.log('Car updated:', res.data);
+                    getAllCars(); // Refresh the car list
+                })
+                .catch(err => console.error(err));
+        };
+
+        // Function to delete a car
+        const deleteCar = () => {
+            const id = document.getElementById('deleteCarId').value;
+
+            axios.delete(`${SERVER}/${id}`)
+                .then(res => {
+                    console.log('Car deleted:', res.data);
+                    getAllCars(); // Refresh the car list
+                })
+                .catch(err => console.error(err));
+        };
+
+        // Initial fetch to populate the car list
+        getAllCars();
+    </script>
+</body>
+</html>
